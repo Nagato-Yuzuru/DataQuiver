@@ -17,7 +17,8 @@
         "build",
         "ci",
         "chore",
-        "revert"
+        "revert",
+        "init"
       ]
     ],
     "type-empty": [
