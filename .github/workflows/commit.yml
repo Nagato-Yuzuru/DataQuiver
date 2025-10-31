@@ -1,0 +1,22 @@
+name: Commit Message Policy
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, edited ]
+  push:
+    branches: [ dev, stage, main, "releases/*", "feat/*" ]
+jobs:
+    commit-policy:
+      name: Check Commit Message Policy
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: Lint Commit Messages
+          uses: wagoid/commitlint-github-action@v6
+          with:
+            configFile: .commitlintrc.json
+
+
+

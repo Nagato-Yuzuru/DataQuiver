@@ -1,0 +1,85 @@
+
+[tool.uv.workspace]
+members = [
+    "packages/*"
+]
+
+
+[build-system]
+requires = ["hatchling>=1.27.0", "hatch-vcs>=0.5.0"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "ruff>=0.14.3",
+]
+
+
+[tool.hatch.version]
+source = "vcs"
+
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+python_version = "3.13"
+show_error_codes = true
+warn_unused_configs = true
+warn_unused_ignores = true
+strict = true
+pretty = true
+warn_return_any = true
+ignore_missing_imports = true
+
+# XXX: 有一些库的类型信息获取不到，先这样，后续寻找根因
+disallow_subclassing_any = false
+
+
+
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "src"
+
+
+[tool.ruff]
+target-version = "py313"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "N",
+    "UP",
+    "ASYNC",
+    "S",
+    "B",
+    "A",
+    "COM",
+    "C4",
+    "DTZ",
+    "T10",
+    "EM",
+    "LOG",
+    "G",
+    "Q",
+    "RET",
+    "TID",
+    "ARG",
+    "PTH",
+    "PL",
+]
+
+ignore = [
+    "COM812", # missing-trailing-comma (与格式化工具冲突)
+    "ISC001", # single-line-implicit-string-concatenation (与格式化工具冲突)
+    "EM101"
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+

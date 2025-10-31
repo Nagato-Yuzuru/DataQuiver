@@ -1,0 +1,6 @@
+# <type>(<scope>): <subject>
+# types: feat | fix | perf | refactor | docs | test | build | ci | chore | revert
+#
+# body: Explain the motivation and scope of impact
+# footer: Related issue, Breaking Change Statement (BREAKING CHANGE: ...)
+

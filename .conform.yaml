@@ -1,0 +1,29 @@
+policy:
+  commit:
+    header:
+      length: 72
+      imperative: true
+    conventional:
+      types:
+        - feat
+        - fix
+        - perf
+        - refactor
+        - docs
+        - test
+        - build
+        - ci
+        - chore
+        - style
+        - revert
+      scopes:
+        - repo
+        - python
+        - go
+        - rust
+        - sdk
+        - config
+        - core
+        - plugins
+      description:
+        minLength: 10

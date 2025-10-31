@@ -1,0 +1,32 @@
+name: merge-policy.yml
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  check-merge-target:
+    name: Verify Merge Direction
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Base Branch
+        run: |
+          base = "${{ github.base_ref }}"
+          head = "${{ github.head_ref }}"
+          echo "base=$base, head=$head"
+          
+          if [[ "$base" == "main" && "$head" != stage* && "$head" != hotix* ]]; then
+          echo "Prohibited from merging into main from non-stage branches"
+          exit 1
+          fi
+          
+          if [[ "$base" == "stage" && "$head" != dev* && "$head" != fix* ]]; then
+          echo "Prohibited from merging into stage from non-feat/fix branches"
+          exit 1
+          fi
+          
+          if [[ "$base" == "dev" && "$head" != "feat*" && "$head" != fix* ]]; then
+          echo "Prohibited from merging into dev from non-feat/fix branches"
+          exit 1
+          fi
+          
+
