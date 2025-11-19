@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package resource.identity.v1;
+import "google/protobuf/any.proto";
+
+message ResourceID {
+  string version = 1;     // e.g., "v1" (支持 schema 演进)
+  string namespace = 2;   // e.g., "ECMWF" or "INTERNAL_STRATEGY"
+  string type = 3;        // e.g., "GRID", "TABLE", "STREAM"
+  string name = 4;        // e.g., "WIND.SURFACE"
+  string id = 5;
+}
+
+enum SemanticType {
+  UNKNOWN = 0;
+
+  METRIC = 10;
+  DIMENSION = 20;
+  TIME = 30;
+
+  GEO_POINT = 40;
+  GEO_POLYGON = 50;
+
+}
+
+
+message ResourceDescriptor {
+  ResourceID id = 1;
+
+  enum Kind {PHYSICAL = 0; VIRTUAL = 1;}
+  Kind kind = 2;
+  // 2. 语义 Schema (逻辑视图，不一定等于物理表结构)
+  map<string, SemanticType> schema = 3;
+  // SemanticType 比如: { "wind": "metric", "region": "dimension", "ts": "time" }  repeated string supported_dimensions = 3;
+
+  // 4. 计算/虚拟字段 (Logical -> Physical 映射)
+  // e.g., "wind_speed" -> "sqrt(u^2 + v^2)"
+  map<string, string> computed_fields = 4;
+  // 5. 元数据与注解 (Tags, Owner, Description)
+  map<string, string> annotations = 5;
+
+  VirtualComposition composition = 10;
+
+  // 6. 物理绑定 (Core 透传给 Plugin，Core 不解析)
+  google.protobuf.Any physical_config = 20;
+}
+
+message VirtualComposition {
+  // 来源资源列表 (The Ingredients)
+  repeated ResourceID sources = 1;
+
+  // 结合逻辑 (The Recipe)
+  // 描述如何把上述来源拼在一起
+  JoinLogic join_logic = 2;
+}
+
+message JoinLogic {
+  // 关联类型: INNER, LEFT, ASOF (时序专用)
+  string type = 1;
+
+  // 关联键: { "RAW_PRICE.trade_id": "RAW_VOLUME.id" }
+  map<string, string> on_keys = 2;
+
+  // 时间对齐策略 (针对时序数据)
+  // e.g., "tolerance: 1h" (允许1小时内的误差对齐)
+  map<string, string> time_alignment = 3;
+}

@@ -1,8 +1,10 @@
-
 [tool.uv.workspace]
 members = [
     "packages/*"
 ]
+
+[tool.uv.sources]
+bird-feeder = { workspace = true }
 
 
 [build-system]
@@ -31,7 +33,6 @@ pretty = true
 warn_return_any = true
 ignore_missing_imports = true
 
-# XXX: 有一些库的类型信息获取不到，先这样，后续寻找根因
 disallow_subclassing_any = false
 
 
@@ -78,8 +79,8 @@ ignore = [
     "EM101"
 ]
 
-[tool.pytest.ini_options]
-testpaths = [
-    "tests",
-]
+#[tool.pytest.ini_options]
+#testpaths = [
+#    "tests",
+#]
 

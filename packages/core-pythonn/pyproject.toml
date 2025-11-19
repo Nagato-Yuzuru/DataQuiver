@@ -1,0 +1,28 @@
+[project]
+name = "data-quiver-core-python"
+version = "0.1.0"
+description = "Core Python package for Data Quiver"
+authors = [
+    { name = "Nagato Yuzuru", email = "x4.nagato.yuzuru@gmail.com" }
+]
+requires-python = ">=3.13"
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "pydantic>=2.12.4",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/data_quiver_core"]
+
+
+[build-system]
+requires = ["hatchling>=1.27.0", "hatch-vcs>=0.5.0"]
+build-backend = "hatchling.build"
