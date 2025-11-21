@@ -76,7 +76,8 @@ select = [
 ignore = [
     "COM812", # missing-trailing-comma (与格式化工具冲突)
     "ISC001", # single-line-implicit-string-concatenation (与格式化工具冲突)
-    "EM101"
+    "EM101",
+    "EM102"
 ]
 
 #[tool.pytest.ini_options]
