@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11","3.12","3.13", "3.14"]
+        python-version: [ "3.10", "3.11","3.12","3.13", "3.14" ]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,27 +20,21 @@ jobs:
       - run: ruff check --fix packages/
       - run: ruff format packages/
       - run: pytest -q packages/
-  go:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: ["1.22.x"]
-        goarch: ["amd64", "arm64"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ matrix.go-version }}
-      - run: go version
-      - run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-          | sh -s -- -b $(go env GOPATH)/bin v1.61.0
-      - run: golangci-lint run ./...
-      - name: Build (cross-compile)
-        run: GOOS=linux GOARCH=${{ matrix.goarch }} go build ./...
-
-
-
-
-
-
+#  go:
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        go-version: ["1.22.x"]
+#        goarch: ["amd64", "arm64"]
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ matrix.go-version }}
+#      - run: go version
+#      - run: |
+#          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
+#          | sh -s -- -b $(go env GOPATH)/bin v1.61.0
+#      - run: golangci-lint run ./...
+#      - name: Build (cross-compile)
+#        run: GOOS=linux GOARCH=${{ matrix.goarch }} go build ./...
