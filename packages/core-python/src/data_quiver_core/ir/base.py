@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC
 from enum import StrEnum
 
@@ -6,6 +8,14 @@ from pydantic import BaseModel, ConfigDict
 
 class IRBase(BaseModel, ABC):
     model_config = ConfigDict(frozen=True, extra="forbid")
+
+
+class UnionIRBase(IRBase):
+    """
+    discriminator name to distinguish union members
+    """
+
+    _union_eigen_type: str
 
 
 class SemanticType(StrEnum):
@@ -22,5 +32,3 @@ class SemanticType(StrEnum):
     GEO_POINT = "GEO_POINT", "Geo Point"
     GEO_POLYGON = "GEO_POLYGON", "Geo Polygon"
     IDENTITY = "IDENTITY", "Identity tuple"
-
-

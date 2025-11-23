@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Set
-from typing import Any, Literal, NewType
+from typing import Any, NewType
 
 from data_quiver_core.ir.base import IRBase, SemanticType
+from data_quiver_core.ir.physical_type import PhysicalType
 from pydantic import Field, Json, model_validator
 
 Namespace = NewType("Namespace", str)
@@ -12,7 +13,7 @@ ResourceTypeName = NewType("ResourceTypeName", str)
 
 class AttributeDef(IRBase):
     name: str
-    type: Literal["STRING", "INT", "FLOAT", "BOOL", "JSON", "TIME", "DATETIME", "DATE"]
+    physical_type: PhysicalType
 
     description: str | None = None
     required: bool = Field(
@@ -21,21 +22,14 @@ class AttributeDef(IRBase):
         "False: optional, just description to read or filter ",
     )
     default: Any | None = Field(None, description="Default value, only used when required is False")
-    repeated: bool = Field(False, description="True: container. False: single value")
-    allowed_values: list[Any] | None = Field(None, description="Allowed values, only used when type is ENUM")
-
-    is_map: bool = Field(False, description="True: map, False: scalar. The key is and only is string")
+    # Use PhysicalType.EnumType instead
+    # allowed_values: list[Any] | None = Field(None, description="Allowed values, only used when type is ENUM")
 
     @model_validator(mode="after")
     def attr_valid(self):
         if self.required:
-            if self.repeated or self.is_map:
-                raise ValueError("Identity attrs must be a scalar")
-            if self.type == "JSON":
-                raise ValueError("Identity attrs must be a scalar, not support JSON")
-        if self.repeated and self.is_map:
-            raise ValueError("Repeated map is not supported")
-
+            if not self.physical_type.is_scalar():
+                raise ValueError(f"Identity attribute '{self.name}' must be scalar")
         return self
 
 
@@ -99,7 +93,7 @@ class DataShapeField(IRBase):
 
     name: str = Field(..., description="Name of the field, e.g. 'timestamp', 'value', 'horizon' ")
     semantic_type: SemanticType
-    physical_type: str = Field(
+    physical_type: PhysicalType = Field(
         ..., description="Physical type, e.g. 'datetime', 'int64'. Do not parse in core, just trans to plugin"
     )
     description: str | None = Field(None)
@@ -119,8 +113,8 @@ class ResourceShape(IRBase):
 
     @model_validator(mode="after")
     def check_primary_dimensions(self):
-        if not (set(self.primary_dimensions) <= self.fields.keys()):
-            raise ValueError("Primary dimensions must be subset of fields")
+        if mismatch := (self.primary_dimensions - self.fields.keys()):
+            raise ValueError(f"Primary dimensions must be subset of fields, mismatch: {mismatch}")
         return self
 
 

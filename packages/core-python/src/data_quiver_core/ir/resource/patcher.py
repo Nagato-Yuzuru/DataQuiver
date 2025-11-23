@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Literal
+from typing import Annotated, Literal
 
 from data_quiver_core.ir.base import IRBase
 from data_quiver_core.ir.resource import ResourceID
@@ -19,11 +19,15 @@ class SetAttribute(PatchMetaOp):
 class DeleteAttribute(PatchMetaOp):
     op_type: Literal["DELETE_ATTR"] = Field("DELETE_ATTR", init=False)
     key: str
+    # TODO: don't allow delete identity attr check in runtime
+
+
+type PatchOperator = Annotated[SetAttribute | DeleteAttribute, Field(discriminator="op_type")]
 
 
 class PatchResource(IRBase):
     target: ResourceID
-    ops: Sequence[PatchMetaOp] = Field(..., min_length=1)
+    ops: Sequence[PatchOperator] = Field(..., min_length=1)
 
     expected_version: str | None = Field(None, description="Optimistic lock to CAS.")
 
